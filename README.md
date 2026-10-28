@@ -26,6 +26,16 @@ Run `ccs`, then pick with up/down + enter:
 
 Restart running `claude` sessions after switching.
 
+## Inside Claude Code
+
+The `ccs/` folder is an optional plugin that adds a `/ccs` popup to switch profiles without leaving a session. Load it with:
+
+```sh
+claude --plugin-dir /path/to/ClaudeCodeSwitcher/ccs
+```
+
+It only switches; add and remove profiles with the CLI.
+
 ## Security
 
 Tokens are stored in plain text in `~/.claude/profiles.json`. Keep that file private and never commit it.
