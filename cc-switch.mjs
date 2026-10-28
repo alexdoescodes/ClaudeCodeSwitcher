@@ -50,7 +50,7 @@ const profiles = load(PROFILES); // { name: { url, token } }
 const settings = load(SETTINGS);
 const env = settings.env ?? {};
 const names = Object.keys(profiles);
-const active = names.find((n) => profiles[n].url === env.ANTHROPIC_BASE_URL);
+const active = names.find((n) => profiles[n].url === env.ANTHROPIC_BASE_URL && profiles[n].token === env.ANTHROPIC_AUTH_TOKEN);
 
 const items = [
   ...names.map((n) => `${n}  (${profiles[n].url})${n === active ? '  [active]' : ''}`),
