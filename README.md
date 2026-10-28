@@ -28,18 +28,26 @@ Restart running `claude` sessions after switching.
 
 ## Inside Claude Code
 
-Two optional plugins (Windows PowerShell setup):
+Two optional plugins:
 
 - `/ccs`: popup to pick a profile. After you pick, it offers to restart now or later. It only switches; add and remove profiles with the CLI.
 - `/restart`: exits and resumes the same session, so a new profile takes effect.
 
-`ccs.ps1` defines `ccs` and a `claude` wrapper that loads both plugins and does the resume. Add this to your PowerShell profile (`$PROFILE`) instead of the alias above:
+`ccs.ps1` (PowerShell) and `ccs.sh` (bash/zsh) define `ccs` and a `claude` wrapper that loads both plugins and does the resume. Source one from your shell profile instead of the alias above:
 
 ```powershell
-. C:\path\to\ClaudeCodeSwitcher\ccs.ps1
+. /path/to/ClaudeCodeSwitcher/ccs.ps1    # $PROFILE
 ```
 
-Start sessions with `claude` from PowerShell; running `claude.exe` directly skips the plugins and the resume.
+```sh
+. /path/to/ClaudeCodeSwitcher/ccs.sh     # ~/.bashrc or ~/.zshrc
+```
+
+Start sessions with `claude` through the wrapper; running the binary directly skips the plugins and the resume.
+
+## Tests
+
+`test/wrapper.sh` and `test/wrapper.ps1` run the wrappers against a fake `claude` and check the relaunch with `--resume`. CI runs them on Linux, macOS and Windows. The popups and the real exit are not covered.
 
 ## Security
 

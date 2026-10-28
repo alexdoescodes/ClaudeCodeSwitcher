@@ -1,0 +1,22 @@
+name: test
+on: [push, pull_request]
+jobs:
+  wrapper:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: pwsh wrapper
+        shell: pwsh
+        run: ./test/wrapper.ps1
+      - name: bash wrapper
+        if: runner.os != 'Windows'
+        run: bash test/wrapper.sh
+      - name: zsh wrapper
+        if: runner.os != 'Windows'
+        run: |
+          command -v zsh >/dev/null || sudo apt-get install -y zsh
+          zsh test/wrapper.sh
