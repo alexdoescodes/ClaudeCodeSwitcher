@@ -28,13 +28,18 @@ Restart running `claude` sessions after switching.
 
 ## Inside Claude Code
 
-The `ccs/` folder is an optional plugin that adds a `/ccs` popup to switch profiles without leaving a session. Load it with:
+Two optional plugins (Windows PowerShell setup):
 
-```sh
-claude --plugin-dir /path/to/ClaudeCodeSwitcher/ccs
+- `/ccs`: popup to pick a profile. After you pick, it offers to restart now or later. It only switches; add and remove profiles with the CLI.
+- `/restart`: exits and resumes the same session, so a new profile takes effect.
+
+`ccs.ps1` defines `ccs` and a `claude` wrapper that loads both plugins and does the resume. Add this to your PowerShell profile (`$PROFILE`) instead of the alias above:
+
+```powershell
+. C:\path\to\ClaudeCodeSwitcher\ccs.ps1
 ```
 
-It only switches; add and remove profiles with the CLI.
+Start sessions with `claude` from PowerShell; running `claude.exe` directly skips the plugins and the resume.
 
 ## Security
 

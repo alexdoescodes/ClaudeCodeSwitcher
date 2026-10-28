@@ -1,0 +1,1 @@
+{ "name": "restart", "version": "0.1.0", "description": "/restart: exit and resume this session (needs the claude wrapper in your PowerShell profile)" }

@@ -1,9 +1,11 @@
+
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
 const PANE = 'ccs'
+const RESTART = 'ccs-restart'
+const picked = atom({ plugin: 'ccs', key: 'msg' } as const, '')
 const DEFAULT = '__default__'
-const msg = atom({ plugin: 'ccs', key: 'msg' } as const, '')
 
 type Profiles = Record<string, { url: string; token: string }>
 
@@ -23,7 +25,6 @@ export const register: Register = on => {
   })
 
   on('command.run', { command: 'ccs' }, async $ => {
-    await update($, msg, () => '')
     await $.ui.open({ id: PANE, title: 'Claude Code endpoint', focus: true, closeOnEscape: true, rows: 9 })
     return { text: '' }
   })
@@ -51,13 +52,40 @@ export const register: Register = on => {
         settings.env.ANTHROPIC_AUTH_TOKEN = profiles[value].token
       }
       await $.fs.write(f.settings, JSON.stringify(settings, null, 2) + '\n')
-      await update($, msg, () => `Now using ${value === DEFAULT ? 'default login' : value}. Restart claude to apply.`)
+      await update($, picked, () => (value === DEFAULT ? 'default login' : value))
+      await $.ui.close({ id: PANE })
+      await $.ui.open({ id: RESTART, title: 'Restart to apply?', focus: true, closeOnEscape: true, rows: 7 })
     }
 
     return (
       <Box flexDirection="column">
         <Select key="profile" autoFocus options={options} value={active ?? (env.ANTHROPIC_BASE_URL ? undefined : DEFAULT)} onSelect={pick} />
-        <Text dimColor>{(await read($, msg)) || 'up/down + enter to switch, esc to close'}</Text>
+        <Text dimColor>up/down + enter to switch, esc to close</Text>
+      </Box>
+    )
+  })
+
+  on('ui.render', { component: 'Pane', requestId: RESTART }, async ($, e) => {
+    const { Box, Text, Select } = $.ui.resolve(e)
+    const name = await read($, picked)
+    const choose = async (value: string) => {
+      await $.ui.close({ id: RESTART })
+      if (value === 'now') await $.command.run({ command: 'restart' })
+    }
+
+    return (
+      <Box flexDirection="column">
+        <Text>Now using {name}. Restart claude to apply?</Text>
+        <Select
+          key="restart"
+          autoFocus
+          value="later"
+          options={[
+            { value: 'later', label: 'Later' },
+            { value: 'now', label: 'Now (exit and resume this session)' },
+          ]}
+          onSelect={choose}
+        />
       </Box>
     )
   })
